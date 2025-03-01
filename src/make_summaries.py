@@ -2,6 +2,7 @@
 import json
 import os
 from utils import summarize_with_ollama
+import download_models
 
 models = {'llama3.2': ['1b', '3b'], 'gemma2': ['2b'], 'qwen2.5': ['0.5b', '1.5b', '3b'], 'codegemma': ['2b'], 'opencoder': ['1.5b'], 'smollm': ['1.7b', '135m', '360m'], 'deepseek-r1': ['1.5b'], 'tinyllama': ['1.1b'], 'tinydolphin': ['1.1b'], 'phi': ['2.7b'], 'orca-mini': ['3b'], 'hermes3': ['3b'], 'moondream': ['1.8b'], 'stablelm-zephyr': ['3b']}
 # models = {'llama3.2': ['1b']}
