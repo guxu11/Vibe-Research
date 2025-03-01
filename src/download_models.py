@@ -1,5 +1,22 @@
 import yaml
 import subprocess
+import time
+
+
+try:
+        # Check if Ollama is already running
+    response = subprocess.run(["curl", "-s", "http://localhost:11434/api/tags"], capture_output=True, text=True)
+    if response.returncode == 0:
+        print("✅ Ollama is already running.")
+except Exception:
+    pass  # If curl fails, assume Ollama is not running
+
+print("🚀 Starting Ollama server...")
+ollama_process = subprocess.Popen(
+    ["ollama", "serve"],
+    stdout=open("ollama_server.log", "w"),
+    stderr=subprocess.STDOUT
+)
 
 # Read and parse the YAML file
 config_file = '../config/model_config_dev.yml'
