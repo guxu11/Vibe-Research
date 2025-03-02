@@ -271,13 +271,10 @@ def compute_conciseness_percentage_score(pred_sentence_line_numbers, num_sentenc
 
 def get_summarization_prompt(transcript):
     return f"""
-            Please read the following text carefully and provide a concise summary that captures 
-            the main ideas and key details. Your summary should be clear, coherent, and written in complete sentences. 
-            The summary should only contain the content and should not start or end with any additional text.
-            
+            Summarize the following text concisely, preserving key ideas and details.  
+            Output only the summary as plain text—no explanations, no formatting, no reasoning process.
+
             {transcript}
-            
-            The output should be a pure string without any formatting or markup.
             """
 
 
