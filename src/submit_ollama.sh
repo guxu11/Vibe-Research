@@ -1,33 +1,45 @@
 #!/bin/bash
-#SBATCH --job-name=ollama_summary    # Job name
-#SBATCH --output=ollama_summary.log  # Log output file
-#SBATCH --gres=gpu:1                 # Request 1 GPU
-#SBATCH --time=04:00:00               # Maximum run time: 4 hours
-#SBATCH --partition=gpucluster        # Run on the GPU cluster
-#SBATCH --cpus-per-task=4             # Allocate 4 CPU cores
+#SBATCH --job-name=ollama_summary
+#SBATCH --output=ollama_summary.log
+#SBATCH --gres=gpu:1
+#SBATCH --time=04:00:00
+#SBATCH --partition=gpucluster
+#SBATCH --cpus-per-task=4
 
+module load cuda/11.8  # 加载 GPU 依赖
 
-# Start Ollama server in the background correctly
-echo "Starting Ollama server..."
+# 强制切换到正确的工作目录
+cd ~/project/Vibe-Research/src || exit 1
+
+# 激活 Python 虚拟环境
+source ~/project/Vibe-Research/.venv/bin/activate
+export PATH=$HOME/.local/bin:$PATH
+
+# 确保 Python 运行正常
+echo "🔍 Python path: $(which python3)" | tee -a make_summaries.log
+python3 --version | tee -a make_summaries.log
+
+# 启动 Ollama 服务器
 nohup ollama serve > ollama_server.log 2>&1 & disown
-sleep 5  # Give some time for the server to initialize
+sleep 5  
 
-# Ensure Ollama uses GPU
-export OLLAMA_ACCELERATE=1
-export OLLAMA_NUM_GPU_LAYERS=100  # Allow more layers to utilize GPU acceleration
+# 确保 Ollama 服务器启动成功
+RETRIES=15
+while ! curl -s http://localhost:11434/api/tags > /dev/null; do
+    echo "🔄 Ollama still starting..." | tee -a make_summaries.log
+    sleep 4
+    ((RETRIES--))
+    if [ $RETRIES -le 0 ]; then
+        echo "❌ Ollama failed to start!" | tee -a make_summaries.log
+        exit 1
+    fi
+done
 
-# Verify if Ollama server is running before proceeding
-if ! curl -s http://localhost:11434/api/tags > /dev/null; then
-  echo "Error: Ollama server failed to start!"
-  exit 1
-fi
+echo "✅ Ollama is ready!" | tee -a make_summaries.log
 
-echo "Ollama server is running."
+# 运行 Python 脚本
+echo "🚀 Running Python script..." | tee -a make_summaries.log
+python3 -u make_summaries.py 2>&1 | tee -a make_summaries.log
 
-# Run the Python script
-python3 make_summaries.py 2>&1 | tee make_summaries.log
-
-
-# Sleep at the end (only if you need Ollama to keep running)
-# sleep infinity
+echo "✅ Python script execution finished." | tee -a make_summaries.log
 

@@ -11,6 +11,7 @@ SUMMARY_DIR = "../summaries"
 
 def make_summaries():
     types = os.listdir(RAW_DATA_DIR)
+    print("types", types)
     for t in types:
         raw_text_files = os.listdir(os.path.join(RAW_DATA_DIR, t))
         raw_text_files.sort()
@@ -31,7 +32,9 @@ def make_summaries():
                 for model, model_sizes in models.items():
                     for model_size in model_sizes:
                         model_name = f"{model}:{model_size}"
+                        print(model_name)
                         summary = summarize_with_ollama(model_name, text)
+                        print(summary)
                         summaries_dict[model_name] = summary
                 summary_file_parent_path = os.path.join(SUMMARY_DIR, t)
                 if not os.path.exists(summary_file_parent_path):
