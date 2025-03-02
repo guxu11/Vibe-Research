@@ -2,7 +2,7 @@
 #SBATCH --job-name=ollama_summary
 #SBATCH --output=ollama_summary_%A_%a.log  # 让每个任务有单独的日志
 #SBATCH --gres=gpu:1
-#SBATCH --time=04:00:00
+#SBATCH --time=08:00:00
 #SBATCH --partition=gpucluster
 #SBATCH --cpus-per-task=4
 #SBATCH --array=0-4
