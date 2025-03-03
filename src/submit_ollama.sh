@@ -7,10 +7,6 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --array=0-4
 
-SECOND_PARAM_ARRAY=(103 274 267 93 27)
-
-SECOND_PARAM=${SECOND_PARAM_ARRAY[$SLURM_ARRAY_TASK_ID]}
-
 cd ~/project/Vibe-Research/src || exit 1
 
 source ~/project/Vibe-Research/.venv/bin/activate
@@ -35,7 +31,7 @@ done
 
 echo "✅ Ollama is ready!" | tee -a make_summaries_${SLURM_ARRAY_TASK_ID}.log
 
-echo "🚀 Running Python script with params: ${SLURM_ARRAY_TASK_ID}, ${SECOND_PARAM}" | tee -a make_summaries_${SLURM_ARRAY_TASK_ID}.log
-python3 -u make_summaries.py ${SLURM_ARRAY_TASK_ID} ${SECOND_PARAM} 2>&1 | tee -a make_summaries_${SLURM_ARRAY_TASK_ID}.log
+echo "🚀 Running Python script with params: ${SLURM_ARRAY_TASK_ID} " | tee -a make_summaries_${SLURM_ARRAY_TASK_ID}.log
+python3 -u make_summaries.py ${SLURM_ARRAY_TASK_ID}  2>&1 | tee -a make_summaries_${SLURM_ARRAY_TASK_ID}.log
 
 echo "✅ Python script execution finished." | tee -a make_summaries_${SLURM_ARRAY_TASK_ID}.log

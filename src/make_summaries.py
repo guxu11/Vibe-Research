@@ -5,10 +5,13 @@ from utils import summarize_with_ollama
 import sys
 
 type_index = int(sys.argv[1])
-start_index = int(sys.argv[2])
+# type_index = 1
 
 models = {'llama3.2': ['1b', '3b'], 'gemma2': ['2b'], 'qwen2.5': ['0.5b', '1.5b', '3b'], 'opencoder': ['1.5b'], 'smollm': ['1.7b'], 'deepseek-r1': ['1.5b'], 'tinyllama': ['1.1b'], 'tinydolphin': ['1.1b'], 'phi': ['2.7b'], 'orca-mini': ['3b'], 'hermes3': ['3b'], 'moondream': ['1.8b'], 'stablelm-zephyr': ['3b']}
-# models = {'llama3.2': ['1b']}
+model_names = []
+for model, model_sizes in models.items():
+    for model_size in model_sizes:
+        model_names.append(f"{model}:{model_size}")
 
 RAW_DATA_DIR = "../News Articles"
 SUMMARY_DIR = "../summaries"
@@ -23,7 +26,6 @@ types = [
 def make_summaries():
     raw_text_files = os.listdir(os.path.join(RAW_DATA_DIR, types[type_index]))
     raw_text_files.sort()
-    raw_text_files = raw_text_files[start_index:]
     for raw_text_file in raw_text_files:
         content = []
         try:
@@ -35,19 +37,32 @@ def make_summaries():
                     content.append(line)
                     line = f.readline()
             text = ' '.join(content)
-            summaries_dict = {
-                "raw_text": text
-            }
-            for model, model_sizes in models.items():
-                for model_size in model_sizes:
-                    model_name = f"{model}:{model_size}"
-                    print(model_name)
-                    summary = summarize_with_ollama(model_name, text)
-                    summaries_dict[model_name] = summary
             summary_file_parent_path = os.path.join(SUMMARY_DIR, types[type_index])
             if not os.path.exists(summary_file_parent_path):
                 os.makedirs(summary_file_parent_path, exist_ok=True)
             summary_file_path = os.path.join(summary_file_parent_path, raw_text_file.replace('.txt', '.json'))
+            summaries_dict = {
+                "raw_text": text
+            }
+            if os.path.exists(summary_file_path):
+                with open(summary_file_path, 'r') as file:
+                    summaries_dict = json.load(file)
+
+            keys_to_delete = [k for k in summaries_dict if k != "raw_text" and k not in model_names]
+
+            for k in keys_to_delete:
+                del summaries_dict[k]
+
+            summary_needed_models = []
+            for _model in model_names:
+                if _model not in summaries_dict or len(summaries_dict[_model]) == 0:
+                    summary_needed_models.append(_model)
+
+            for model_name in summary_needed_models:
+                print(model_name)
+                summary = summarize_with_ollama(model_name, text)
+                summaries_dict[model_name] = summary
+
             with open(summary_file_path, 'w') as f:
                 f.write(json.dumps(summaries_dict))
 
