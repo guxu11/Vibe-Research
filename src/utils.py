@@ -6,6 +6,9 @@ import ollama
 import ast
 import pprint
 
+from ollama import RequestError
+
+
 def get_api_key():
     base_path = '../.env'
     with open(base_path) as f:
@@ -280,19 +283,27 @@ def get_summarization_prompt(transcript):
 
 def summarize_with_ollama(model, transcript):
     prompt = get_summarization_prompt(transcript)
-    # print(prompt)
-    try:
-        response = ollama.chat(
+
+    def attempt_chat():
+        return ollama.chat(
             model=model,
-            messages=[
-                {"role": "user", "content": prompt.strip()}
-            ]
-        )
-        ret = response['message']['content']
+            messages=[{"role": "user", "content": prompt.strip()}]
+        )['message']['content']
+
+    try:
+        return attempt_chat()
+    except ollama.ResponseError as e:
+        print(f"Model '{model}' not found. Attempting to download...")
+        try:
+            ollama.pull(model)
+            print(f"Model '{model}' downloaded successfully. Retrying chat...")
+            return attempt_chat()
+        except Exception as pull_error:
+            print(f"Failed to download model '{model}': {pull_error}")
+            return f"Error: Could not download model '{model}'."
     except Exception as e:
         pprint.pprint(e)
         return ""
-    return ret
 
 def get_ollama_model_list():
     models = []
