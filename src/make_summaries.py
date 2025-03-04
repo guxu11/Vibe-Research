@@ -6,7 +6,7 @@ import sys
 
 type_name = sys.argv[1]
 OLLAMA_API_HOST = sys.argv[2]
-os.environ["OLLAMA_API_HOST"] = OLLAMA_API_HOST
+os.environ["OLLAMA_HOST"] = OLLAMA_API_HOST
 
 models = {
     'llama3.2': ['1b', '3b'], 'gemma2': ['2b'], 'qwen2.5': ['0.5b', '1.5b', '3b'],
