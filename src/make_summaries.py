@@ -14,6 +14,7 @@ models = {
     'orca-mini': ['3b'], 'hermes3': ['3b'], 'stablelm-zephyr': ['3b'],
     'stablelm2': ['1.6b'], 'granite3.1-dense': ['2b']
 }
+white_list = ['raw_text', 'chatgpt-4o-latest']
 
 model_names = [f"{model}:{size}" for model, sizes in models.items() for size in sizes]
 
@@ -52,7 +53,7 @@ def make_summaries():
             with open(summary_file_path, 'r') as file:
                 summaries_dict.update(json.load(file))
         # 删除不在模型列表中的无效摘要
-        summaries_dict = {k: v for k, v in summaries_dict.items() if k == "raw_text" or k in model_names}
+        summaries_dict = {k: v for k, v in summaries_dict.items() if k in white_list or k in model_names}
 
         # 确定需要生成摘要的模型
         summary_needed_models = [m for m in model_names if m not in summaries_dict or not summaries_dict[m]]
