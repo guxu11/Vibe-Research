@@ -45,6 +45,6 @@ echo "✅ Ollama is ready on ${PORT}!"
 
 # **运行 Python 脚本**
 echo "🚀 Running Python script with param: ${type_name} on GPU ${CUDA_VISIBLE_DEVICES}"
-python3 -u make_summaries.py "${type_name}" ${OLLAMA_API_HOST}
+python3 -u make_summaries.py "${type_name}" "${OLLAMA_API_HOST}"
 
 echo "✅ Python script execution finished."
