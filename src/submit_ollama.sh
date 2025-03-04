@@ -29,7 +29,7 @@ done
 
 echo "✅ Ollama is ready!"
 
-echo "🚀 Running Python script with params:"
-python3 -u make_summaries.py
+echo "🚀 Running Python script with param: ${SLURM_ARRAY_TASK_ID}"
+python3 -u make_summaries.py ${SLURM_ARRAY_TASK_ID}
 
 echo "✅ Python script execution finished."
