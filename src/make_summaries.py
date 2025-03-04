@@ -4,8 +4,9 @@ import os
 from utils import summarize_with_ollama
 import sys
 
-type_index = int(sys.argv[1])
-# type_index = 0
+type_name = sys.argv[1]
+OLLAMA_API_HOST = sys.argv[2]
+os.environ["OLLAMA_API_HOST"] = OLLAMA_API_HOST
 
 models = {
     'llama3.2': ['1b', '3b'], 'gemma2': ['2b'], 'qwen2.5': ['0.5b', '1.5b', '3b'],
@@ -30,45 +31,48 @@ types = [
 ]
 
 def make_summaries():
-    raw_text_files = os.listdir(os.path.join(RAW_DATA_DIR, types[type_index]))
-    raw_text_files.sort()
-    for raw_text_file in raw_text_files:
-        content = []
-        raw_text_file_path = os.path.join(RAW_DATA_DIR, types[type_index], raw_text_file)
-        print(raw_text_file)
-        with open(raw_text_file_path, 'r') as f:
-            line = f.readline()
-            while line:
-                content.append(line)
+    types_to_process = type_name.split("+")
+    print(types_to_process)
+    for t in types_to_process:
+        raw_text_files = os.listdir(os.path.join(RAW_DATA_DIR, t))
+        raw_text_files.sort()
+        for raw_text_file in raw_text_files:
+            content = []
+            raw_text_file_path = os.path.join(RAW_DATA_DIR, t, raw_text_file)
+            print(raw_text_file)
+            with open(raw_text_file_path, 'r') as f:
                 line = f.readline()
-        text = ' '.join(content)
+                while line:
+                    content.append(line)
+                    line = f.readline()
+            text = ' '.join(content)
 
-        summary_file_parent_path = os.path.join(SUMMARY_DIR, types[type_index])
-        summary_file_path = os.path.join(summary_file_parent_path, raw_text_file.replace('.txt', '.json'))
+            summary_file_parent_path = os.path.join(SUMMARY_DIR, t)
+            summary_file_path = os.path.join(summary_file_parent_path, raw_text_file.replace('.txt', '.json'))
 
-        summaries_dict = {
-            "raw_text": text
-        }
-        if os.path.exists(summary_file_path):
-            with open(summary_file_path, 'r') as file:
-                summaries_dict.update(json.load(file))
-        # 删除不在模型列表中的无效摘要
-        summaries_dict = {k: v for k, v in summaries_dict.items() if k in white_list or k in model_names}
+            summaries_dict = {
+                "raw_text": text
+            }
+            if os.path.exists(summary_file_path):
+                with open(summary_file_path, 'r') as file:
+                    summaries_dict.update(json.load(file))
+            # 删除不在模型列表中的无效摘要
+            summaries_dict = {k: v for k, v in summaries_dict.items() if k in white_list or k in model_names}
 
-        # 确定需要生成摘要的模型
-        summary_needed_models = [m for m in model_names if m not in summaries_dict or not summaries_dict[m]]
+            # 确定需要生成摘要的模型
+            summary_needed_models = [m for m in model_names if m not in summaries_dict or not summaries_dict[m]]
 
-        try:
-            for model_name in summary_needed_models:
-                print(model_name)
-                summary = summarize_with_ollama(model_name, text)
-                summaries_dict[model_name] = summary
-        except Exception as e:
-            print(e)
-            continue
+            try:
+                for model_name in summary_needed_models:
+                    print(model_name)
+                    summary = summarize_with_ollama(model_name, text)
+                    summaries_dict[model_name] = summary
+            except Exception as e:
+                print(e)
+                continue
 
-        with open(summary_file_path, 'w') as f:
-            f.write(json.dumps(summaries_dict))
+            with open(summary_file_path, 'w') as f:
+                f.write(json.dumps(summaries_dict))
 
 
 

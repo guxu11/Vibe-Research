@@ -5,20 +5,34 @@
 #SBATCH --time=08:00:00
 #SBATCH --partition=gpucluster
 #SBATCH --cpus-per-task=4
-#SBATCH --array=0-4
-
+#SBATCH --array=0-3
 
 cd ~/project/Vibe-Research/src || exit 1
 
+# 激活 Python 虚拟环境
 source ~/project/Vibe-Research/.venv/bin/activate
 export PATH=$HOME/.local/bin:$PATH
-export OLLAMA_N_GPU_LAYERS=40
-nohup ollama serve > ollama_server_${SLURM_ARRAY_TASK_ID}.log 2>&1 & disown
+
+# **绑定 GPU**
+export CUDA_VISIBLE_DEVICES=$SLURM_ARRAY_TASK_ID
+export OLLAMA_CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES
+
+# **分配 Ollama 端口**
+PORT=$((11434 + SLURM_ARRAY_TASK_ID))
+export OLLAMA_API_HOST="127.0.0.1:${PORT}"
+
+# **定义 `type` 任务分配**
+types=("business" "entertainment" "politics" "sport+tech")
+type_name=${types[$SLURM_ARRAY_TASK_ID]}
+
+# **启动 Ollama 服务器**
+nohup ollama serve --port $PORT > ollama_server_${SLURM_ARRAY_TASK_ID}.log 2>&1 & disown
 sleep 5
 
+# **等待 Ollama 启动**
 RETRIES=15
-while ! curl -s http://localhost:11434/api/tags > /dev/null; do
-    echo "🔄 Ollama still starting..."
+while ! curl -s http://127.0.0.1:${PORT}/api/tags > /dev/null; do
+    echo "🔄 Ollama still starting on port ${PORT}..."
     sleep 4
     ((RETRIES--))
     if [ $RETRIES -le 0 ]; then
@@ -27,9 +41,10 @@ while ! curl -s http://localhost:11434/api/tags > /dev/null; do
     fi
 done
 
-echo "✅ Ollama is ready!"
+echo "✅ Ollama is ready on ${PORT}!"
 
-echo "🚀 Running Python script with param: ${SLURM_ARRAY_TASK_ID}"
-python3 -u make_summaries.py ${SLURM_ARRAY_TASK_ID}
+# **运行 Python 脚本**
+echo "🚀 Running Python script with param: ${type_name} on GPU ${CUDA_VISIBLE_DEVICES}"
+python3 -u make_summaries.py "${type_name}" ${OLLAMA_API_HOST}
 
 echo "✅ Python script execution finished."
