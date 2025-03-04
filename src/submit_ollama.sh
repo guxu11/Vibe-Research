@@ -29,7 +29,7 @@ done
 
 echo "✅ Ollama is ready!"
 
-echo "🚀 Running Python script with params:
+echo "🚀 Running Python script with params:"
 python3 -u make_summaries.py
 
 echo "✅ Python script execution finished."
