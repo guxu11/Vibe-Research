@@ -12,7 +12,7 @@ cd ~/project/Vibe-Research/src || exit 1
 
 source ~/project/Vibe-Research/.venv/bin/activate
 export PATH=$HOME/.local/bin:$PATH
-
+export OLLAMA_N_GPU_LAYERS=40
 nohup ollama serve > ollama_server_${SLURM_ARRAY_TASK_ID}.log 2>&1 & disown
 sleep 5
 
