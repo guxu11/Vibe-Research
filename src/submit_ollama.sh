@@ -22,7 +22,7 @@ PORT=$((11434 + SLURM_ARRAY_TASK_ID))
 export OLLAMA_HOST="127.0.0.1:${PORT}"
 
 # **定义 `type` 任务分配**
-types=("sport", "tech")
+types=("sport" "tech")
 type_name=${types[$SLURM_ARRAY_TASK_ID]}
 
 # **启动 Ollama 服务器**
