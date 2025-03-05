@@ -23,7 +23,7 @@ export OLLAMA_HOST="127.0.0.1:${PORT}"
 
 # **定义 `type` 任务分配**
 types=("sport" "tech")
-type_name=${types[$SLURM_ARRAY_TASK_ID]}
+type_name=${types[$SLURM_ARRAY_TASK_ID - 2]}
 
 # **启动 Ollama 服务器**
 nohup ollama serve > ollama_server_${SLURM_ARRAY_TASK_ID}.log 2>&1 & disown
