@@ -22,7 +22,7 @@ def check_progress():
                 json_data = json.load(f)
                 summary_done = True
                 for model in OLLAMA_MODEL_LIST:
-                    if model not in json_data or not json_data[model]:
+                    if model not in json_data or not json_data[model] or not json_data[model].startswith("ERROR"):
                         summary_done = False
                         break
                 if summary_done:

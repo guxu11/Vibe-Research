@@ -5,7 +5,7 @@
 #SBATCH --time=08:00:00
 #SBATCH --partition=gpucluster
 #SBATCH --cpus-per-task=4
-#SBATCH --array=2-3
+#SBATCH --array=0
 
 cd ~/project/Vibe-Research/src || exit 1
 
@@ -22,8 +22,8 @@ PORT=$((11434 + SLURM_ARRAY_TASK_ID))
 export OLLAMA_HOST="127.0.0.1:${PORT}"
 
 # **定义 `type` 任务分配**
-types=("sport" "tech")
-type_name=${types[$SLURM_ARRAY_TASK_ID - 2]}
+types=("business" "sport" "tech")
+type_name=${types[$SLURM_ARRAY_TASK_ID]}
 
 # **启动 Ollama 服务器**
 nohup ollama serve > ollama_server_${SLURM_ARRAY_TASK_ID}.log 2>&1 & disown

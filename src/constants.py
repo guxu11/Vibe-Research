@@ -12,7 +12,7 @@ OLLAMA_MODELS = {
 }
 
 OLLAMA_MODEL_LIST = [f"{model}:{size}" for model, sizes in OLLAMA_MODELS.items() for size in sizes]
-OLLAMA_REQUEST_TIME_OUT=60
+OLLAMA_REQUEST_TIME_OUT=90
 
 TEXT_CATEGORIES = [
     "business",
