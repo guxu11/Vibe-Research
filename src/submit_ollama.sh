@@ -5,7 +5,7 @@
 #SBATCH --time=08:00:00
 #SBATCH --partition=gpucluster
 #SBATCH --cpus-per-task=4
-#SBATCH --array=0
+#SBATCH --array=0-3
 
 cd ~/project/Vibe-Research/src || exit 1
 
@@ -20,10 +20,6 @@ export OLLAMA_CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES
 # **分配 Ollama 端口**
 PORT=$((11434 + SLURM_ARRAY_TASK_ID))
 export OLLAMA_HOST="127.0.0.1:${PORT}"
-
-# **定义 `type` 任务分配**
-types=("business" "sport" "tech")
-type_name=${types[$SLURM_ARRAY_TASK_ID]}
 
 # **启动 Ollama 服务器**
 nohup ollama serve > ollama_server_${SLURM_ARRAY_TASK_ID}.log 2>&1 & disown
@@ -44,7 +40,7 @@ done
 echo "✅ Ollama is ready on ${PORT}!"
 
 # **运行 Python 脚本**
-echo "🚀 Running Python script with param: ${type_name} on GPU ${CUDA_VISIBLE_DEVICES}"
-python3 -u make_summaries.py "${type_name}" "${OLLAMA_HOST}"
+echo "🚀 Running Python script with param: ${SLURM_ARRAY_TASK_ID} on GPU ${CUDA_VISIBLE_DEVICES}"
+python3 -u make_summaries.py "${SLURM_ARRAY_TASK_ID}" "${OLLAMA_HOST}"
 
 echo "✅ Python script execution finished."
