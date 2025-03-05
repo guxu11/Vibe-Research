@@ -18,6 +18,7 @@ def make_summaries():
     raw_text_files = os.listdir(os.path.join(RAW_DATA_DIR, t))
     raw_text_files.sort()
     raw_text_files = raw_text_files[task_id::4]
+    print(raw_text_files)
     for raw_text_file in raw_text_files:
         content = []
         raw_text_file_path = os.path.join(RAW_DATA_DIR, t, raw_text_file)
