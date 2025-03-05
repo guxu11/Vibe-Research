@@ -3,32 +3,14 @@ import json
 import os
 from utils import summarize_with_ollama
 import sys
+from constants import OLLAMA_MODEL_LIST, RAW_DATA_DIR, SUMMARY_DIR
 
 type_name = sys.argv[1]
 OLLAMA_API_HOST = sys.argv[2]
 os.environ["OLLAMA_HOST"] = OLLAMA_API_HOST
 
-models = {
-    'llama3.2': ['1b', '3b'], 'gemma2': ['2b'], 'qwen2.5': ['0.5b', '1.5b', '3b'],
-    'opencoder': ['1.5b'], 'smollm': ['1.7b'], 'deepseek-r1': ['1.5b'],
-    'tinyllama': ['1.1b'], 'tinydolphin': ['1.1b'], 'phi': ['2.7b'],
-    'orca-mini': ['3b'], 'hermes3': ['3b'], 'stablelm-zephyr': ['3b'],
-    'stablelm2': ['1.6b'], 'granite3.1-dense': ['2b']
-}
 white_list = ['raw_text', 'chatgpt-4o-latest']
 
-model_names = [f"{model}:{size}" for model, sizes in models.items() for size in sizes]
-
-
-RAW_DATA_DIR = "../News Articles"
-SUMMARY_DIR = "../summaries"
-types = [
-    "business",
-    "entertainment",
-    "politics",
-    "sport",
-    "tech",
-]
 
 def make_summaries():
     types_to_process = type_name.split("+")
@@ -57,10 +39,10 @@ def make_summaries():
                 with open(summary_file_path, 'r') as file:
                     summaries_dict.update(json.load(file))
             # 删除不在模型列表中的无效摘要
-            summaries_dict = {k: v for k, v in summaries_dict.items() if k in white_list or k in model_names}
+            summaries_dict = {k: v for k, v in summaries_dict.items() if k in white_list or k in OLLAMA_MODEL_LIST}
 
             # 确定需要生成摘要的模型
-            summary_needed_models = [m for m in model_names if m not in summaries_dict or not summaries_dict[m]]
+            summary_needed_models = [m for m in OLLAMA_MODEL_LIST if m not in summaries_dict or not summaries_dict[m]]
 
             try:
                 for model_name in summary_needed_models:

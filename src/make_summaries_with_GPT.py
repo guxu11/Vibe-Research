@@ -3,16 +3,8 @@ from utils import get_client, get_response, get_summarization_prompt
 import os
 import json
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from constants import SUMMARY_DIR, TEXT_CATEGORIES
 
-RAW_DATA_DIR = "../News Articles"
-SUMMARY_DIR = "../summaries"
-types = [
-    "business",
-    "entertainment",
-    "politics",
-    "sport",
-    "tech",
-]
 MODEL = "chatgpt-4o-latest"
 MAX_THREADS = max_threads = os.cpu_count() * 2
 print(f"Using {MAX_THREADS} threads.")
@@ -48,7 +40,7 @@ def make_summaries_from_gpt(t):
 
 if __name__ == '__main__':
     with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
-        futures = {executor.submit(make_summaries_from_gpt, t): t for t in types}
+        futures = {executor.submit(make_summaries_from_gpt, t): t for t in TEXT_CATEGORIES}
 
         for future in as_completed(futures):
             result = future.result()

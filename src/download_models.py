@@ -1,9 +1,10 @@
 import yaml
 import subprocess
+from constants import CONFIG_FILE_PATH
 
 # Read and parse the YAML file
-config_file = '../config/model_config_dev.yml'
-with open(config_file, 'r') as file:
+
+with open(CONFIG_FILE_PATH, 'r') as file:
     config = yaml.safe_load(file)
 
 # Retrieve the list of ollama_hosts

@@ -5,6 +5,8 @@ import openai
 import ollama
 import ast
 import pprint
+import nltk.data
+
 
 def get_api_key():
     base_path = '../.env'
@@ -44,6 +46,9 @@ def get_response(client, prompt, model, temperature=0.0):
 
     return text_response
 
+def split_text_into_sentences(text):
+    tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    return tokenizer.tokenize(text)
 
 '''
 Two functions for fact checking
@@ -323,5 +328,12 @@ if __name__ == '__main__':
     '''
 #     print(summarize_with_ollama("llama3.2:3b", raw_text))
 #     print(get_ollama_model_list())
-    summary = get_response(get_client(), get_summarization_prompt(raw_text), "gpt-4-turbo")
+#     summary = get_response(get_client(), get_summarization_prompt(raw_text), "gpt-4-turbo")
+    summary = '''
+    A formula for an ideal Christmas single has been revealed by British Hit Singles & Albums, including references to Father Christmas, sleigh bells, a children's choir, and charity. The song title should also mention \"Christmas\" in the title and include wishes for peace on earth. Gonna Have a No 1 This Christmas, created by Moped Vs Santa, is the first Christmas single that perfectly combines these elements. Despite Santa not being listed among top chart performers in the book, this allows them to help reclaim his rightful place in British recording history.
+    '''
+    sentences = split_text_into_sentences(summary)
     print(summary)
+
+    print("size of sentences:", len(sentences))
+    print(sentences)
