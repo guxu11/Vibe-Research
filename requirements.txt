@@ -2,3 +2,4 @@ openai
 ollama
 pyyaml
 nltk
+sqlite3
