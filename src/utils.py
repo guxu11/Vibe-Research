@@ -279,26 +279,36 @@ def get_summarization_prompt(transcript):
             """
 
 
-def summarize_with_ollama(model, transcript, timeout=60):
-    prompt = get_summarization_prompt(transcript)
+import multiprocessing
+import ollama
 
-    def request_ollama():
+
+def request_ollama(model, prompt, queue):
+    try:
         response = ollama.chat(
             model=model,
             messages=[{"role": "user", "content": prompt.strip()}]
         )
-        return response['message']['content']
-
-    try:
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            future = executor.submit(request_ollama)
-            return future.result(timeout=timeout)
-    except concurrent.futures.TimeoutError:
-        print(f"⏳ Timeout: Model {model} took too long to respond, exceeding {timeout} seconds. Skipping...")
-        return ""
+        queue.put(response['message']['content'])
     except Exception as e:
-        print(f"❌ Error in summarize_with_ollama: {e}")
+        queue.put(f"ERROR: {e}")
+
+
+def summarize_with_ollama(model, transcript, timeout=60):
+    prompt = get_summarization_prompt(transcript)
+    queue = multiprocessing.Queue()
+    process = multiprocessing.Process(target=request_ollama, args=(model, prompt, queue))
+
+    process.start()
+    process.join(timeout)
+    if process.is_alive():
+        print(f"⏳ Timeout: Model {model} took too long, killing process...")
+        process.terminate()
+        process.join()
         return ""
+
+    return queue.get() if not queue.empty() else ""
+
 
 def get_ollama_model_list():
     models = []
