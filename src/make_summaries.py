@@ -6,8 +6,8 @@ import sys
 from constants import OLLAMA_MODEL_LIST, RAW_DATA_DIR, SUMMARY_DIR, OLLAMA_REQUEST_TIME_OUT
 
 type_name = sys.argv[1]
-OLLAMA_API_HOST = sys.argv[2]
-os.environ["OLLAMA_HOST"] = OLLAMA_API_HOST
+OLLAMA_HOST = sys.argv[2]
+os.environ["OLLAMA_HOST"] = OLLAMA_HOST
 
 white_list = ['raw_text', 'chatgpt-4o-latest']
 
