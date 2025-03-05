@@ -1,4 +1,5 @@
 # Created by guxu at 2/27/25
+import concurrent.futures
 import json
 
 import openai
@@ -282,21 +283,26 @@ def get_summarization_prompt(transcript):
             """
 
 
-def summarize_with_ollama(model, transcript):
+def summarize_with_ollama(model, transcript, timeout=60):
     prompt = get_summarization_prompt(transcript)
-    # print(prompt)
-    try:
+
+    def request_ollama():
         response = ollama.chat(
             model=model,
-            messages=[
-                {"role": "user", "content": prompt.strip()}
-            ]
+            messages=[{"role": "user", "content": prompt.strip()}]
         )
-        ret = response['message']['content']
-    except Exception as e:
-        pprint.pprint(e)
+        return response['message']['content']
+
+    try:
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future = executor.submit(request_ollama)
+            return future.result(timeout=timeout)
+    except concurrent.futures.TimeoutError:
+        print(f"⏳ Timeout: Model {model} took too long to respond, exceeding {timeout} seconds. Skipping...")
         return ""
-    return ret
+    except Exception as e:
+        print(f"❌ Error in summarize_with_ollama: {e}")
+        return ""
 
 def get_ollama_model_list():
     models = []

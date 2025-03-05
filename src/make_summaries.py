@@ -3,7 +3,7 @@ import json
 import os
 from utils import summarize_with_ollama
 import sys
-from constants import OLLAMA_MODEL_LIST, RAW_DATA_DIR, SUMMARY_DIR
+from constants import OLLAMA_MODEL_LIST, RAW_DATA_DIR, SUMMARY_DIR, OLLAMA_REQUEST_TIME_OUT
 
 type_name = sys.argv[1]
 OLLAMA_API_HOST = sys.argv[2]
@@ -47,7 +47,7 @@ def make_summaries():
             try:
                 for model_name in summary_needed_models:
                     print(model_name)
-                    summary = summarize_with_ollama(model_name, text)
+                    summary = summarize_with_ollama(model_name, text, timeout=OLLAMA_REQUEST_TIME_OUT)
                     summaries_dict[model_name] = summary
             except Exception as e:
                 print(e)
