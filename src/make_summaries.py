@@ -44,7 +44,7 @@ def make_summaries():
                 summaries_dict = {k: v for k, v in summaries_dict.items() if k in white_list or k in OLLAMA_MODEL_LIST}
 
                 # 确定需要生成摘要的模型
-                summary_needed_models = [m for m in OLLAMA_MODEL_LIST if m not in summaries_dict or not summaries_dict[m] or not summaries_dict[m].startswith("ERROR")]
+                summary_needed_models = [m for m in OLLAMA_MODEL_LIST if m not in summaries_dict or not summaries_dict[m] or summaries_dict[m].startswith("ERROR")]
 
                 try:
                     for model_name in summary_needed_models:
