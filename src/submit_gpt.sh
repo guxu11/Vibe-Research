@@ -12,6 +12,6 @@ export PATH=$HOME/.local/bin:$PATH
 
 echo "🚀 Running Python script"
 
-python3 -u make_summaries_with_GPT.py
+python3 -u fact_checking.py
 
 echo "✅ Python script execution finished."
