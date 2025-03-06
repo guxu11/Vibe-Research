@@ -309,6 +309,19 @@ def summarize_with_ollama(model, transcript, timeout=60):
 
     return queue.get() if not queue.empty() else ""
 
+def get_response_from_ollama(model, prompt, timeout=60):
+    queue = multiprocessing.Queue()
+    process = multiprocessing.Process(target=request_ollama, args=(model, prompt, queue))
+    process.start()
+    if timeout > 0:
+        process.join(timeout)
+        if process.is_alive():
+            print(f"⏳ Timeout: Model {model} took too long, killing process...")
+            process.terminate()
+            process.join()
+            return ""
+
+    return queue.get() if not queue.empty() else ""
 
 def get_ollama_model_list():
     models = []

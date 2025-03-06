@@ -1,15 +1,21 @@
 # Created by guxu at 2/27/25
 import json
 import multiprocessing
+import sys
 
 from constants import SUMMARY_DIR, SENTENCE_DIR, TEXT_CATEGORIES
-from utils import get_client, get_response, get_fact_checking_prompt, parsing_llm_fact_checking_output
+from utils import get_client, get_response, get_fact_checking_prompt, parsing_llm_fact_checking_output, get_response_from_ollama
 import os
 import re
 try:
     import nltk.data
 except Exception as e:
     pass
+
+task_id = int(sys.argv[1])
+OLLAMA_HOST = sys.argv[2]
+os.environ["OLLAMA_HOST"] = OLLAMA_HOST
+print("OLLAMA_HOST: ", OLLAMA_HOST)
 
 
 def split_text_into_sentences(text):
@@ -63,8 +69,9 @@ def write_sentences():
                 print(e)
                 continue
 
-MODEL = "chatgpt-4o-latest"
-def fact_checking_by_type(t):
+MODEL_OPENAI = "chatgpt-4o-latest"
+MODEL_OLLAMA = "llama3.3:latest"
+def fact_checking_by_type(t, model_family='openai'):
     print(t)
     folder = os.path.join(SENTENCE_DIR, t)
     files = os.listdir(folder)
@@ -85,7 +92,7 @@ def fact_checking_by_type(t):
                 prompt = get_fact_checking_prompt(raw_text, sentences)
                 response = ""
                 try:
-                    response = get_response(get_client(), prompt, MODEL)
+                    response = get_response(get_client(), prompt, MODEL_OPENAI) if model_family == 'openai' else get_response_from_ollama(prompt, MODEL_OLLAMA, -1)
                 except Exception as e:
                     print(e)
                     continue
@@ -101,8 +108,9 @@ def fact_checking_by_type(t):
 
 
 if __name__ == '__main__':
-    MAX_PROCESSES = len(TEXT_CATEGORIES)
-    with multiprocessing.Pool(processes=MAX_PROCESSES) as pool:
-        pool.map(fact_checking_by_type, TEXT_CATEGORIES)
-
+    if task_id in (0, 1, 2):
+        fact_checking_by_type(TEXT_CATEGORIES[task_id], 'ollama')
+    else:
+        for i in range(3,5):
+            fact_checking_by_type(TEXT_CATEGORIES[i], 'ollama')
     print("🎉 All tasks completed!")
