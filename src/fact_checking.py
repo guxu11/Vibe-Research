@@ -83,16 +83,17 @@ def fact_checking_by_type(t, model_family='openai'):
                 sentence_dict = json.load(f)
             raw_text = sentence_dict['raw_text']
             for model in sentence_dict:
-                print(model)
                 if model == 'raw_text':
                     continue
-                if 'pred_labels' in sentence_dict[model] and 'pred_types' in sentence_dict[model] and sentence_dict[model]['pred_labels'] and sentence_dict[model]['pred_types']:
+                if 'pred_labels' in sentence_dict[model] and 'pred_types' in sentence_dict[model] and sentence_dict[model]['pred_labels'] and sentence_dict[model]['pred_types'] and len(sentence_dict[model]['pred_labels']) == len(sentence_dict[model]['pred_types']) and len(sentence_dict[model]['pred_labels']) == len(sentence_dict[model]['sentences']):
                     continue
+                print(model)
                 sentences = sentence_dict[model]['sentences']
                 prompt = get_fact_checking_prompt(raw_text, sentences)
                 response = ""
                 try:
                     response = get_response(get_client(), prompt, MODEL_OPENAI) if model_family == 'openai' else get_response_from_ollama(MODEL_OLLAMA, prompt, -1)
+                    print(response)
                 except Exception as e:
                     print(e)
                     continue
