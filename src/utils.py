@@ -310,16 +310,21 @@ def summarize_with_ollama(model, transcript, timeout=60):
     return queue.get() if not queue.empty() else ""
 
 def get_response_from_ollama(model, prompt, timeout=60):
+    """ 使用多进程调用 Ollama，支持超时控制 """
     queue = multiprocessing.Queue()
     process = multiprocessing.Process(target=request_ollama, args=(model, prompt, queue))
     process.start()
+
     if timeout > 0:
-        process.join(timeout)
+        process.join(timeout)  # 等待最多 `timeout` 秒
         if process.is_alive():
             print(f"⏳ Timeout: Model {model} took too long, killing process...")
             process.terminate()
             process.join()
             return ""
+
+    else:
+        process.join()  # `timeout <= 0` 时，等待进程执行完毕（无超时）
 
     return queue.get() if not queue.empty() else ""
 
