@@ -62,7 +62,6 @@ def make_summaries():
             continue
 
 
-
 if __name__ == '__main__':
     make_summaries()
     # print(models)
