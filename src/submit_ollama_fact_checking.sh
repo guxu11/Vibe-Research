@@ -39,6 +39,15 @@ done
 
 echo "✅ Ollama is ready on ${PORT}!"
 
+# **检查是否存在 llama3.3:latest**
+if ! ollama list | grep -q "llama3.3:latest"; then
+    echo "📥 Model llama3.3:latest not found. Downloading..."
+    ollama pull llama3.3:latest
+    echo "✅ Model llama3.3:latest downloaded."
+else
+    echo "✅ Model llama3.3:latest already exists."
+fi
+
 # **运行 Python 脚本**
 echo "🚀 Running Python script with param: ${SLURM_ARRAY_TASK_ID} on GPU ${CUDA_VISIBLE_DEVICES}"
 python3 -u fact_checking.py "${SLURM_ARRAY_TASK_ID}" "${OLLAMA_HOST}"
