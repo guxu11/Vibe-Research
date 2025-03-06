@@ -92,7 +92,7 @@ def fact_checking_by_type(t, model_family='openai'):
                 prompt = get_fact_checking_prompt(raw_text, sentences)
                 response = ""
                 try:
-                    response = get_response(get_client(), prompt, MODEL_OPENAI) if model_family == 'openai' else get_response_from_ollama(MODEL_OLLAMA, prompt, -1)
+                    response = get_response(get_client(), prompt, MODEL_OPENAI) if model_family == 'openai' else get_response_from_ollama(MODEL_OLLAMA, prompt, timeout=90)
                 except Exception as e:
                     print(e)
                     continue
