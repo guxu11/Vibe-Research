@@ -17,9 +17,6 @@ OLLAMA_HOST = sys.argv[2]
 os.environ["OLLAMA_HOST"] = OLLAMA_HOST
 print("OLLAMA_HOST: ", OLLAMA_HOST)
 
-start_index_list = [219, 229, 200, 239, 40]
-
-
 def split_text_into_sentences(text):
     tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
     return tokenizer.tokenize(text)
@@ -76,20 +73,24 @@ MODEL_OLLAMA = "llama3.3:latest"
 def fact_checking_by_type(model_family='openai'):
     for i, t in enumerate(TEXT_CATEGORIES):
         print(t)
-        start_index = start_index_list[i]
         folder = os.path.join(SENTENCE_DIR, t)
         files = os.listdir(folder)
         files.sort()
-        files = files[start_index+task_id::4]
-        print(files)
         for file in files:
-            print(f'{t}-{file}')
+            print(f'******** {t}-{file} ********')
             try:
                 with open(os.path.join(folder, file), 'r') as f:
                     sentence_dict = json.load(f)
                 raw_text = sentence_dict['raw_text']
+                fact_checking_status = sentence_dict.get('fact_checking_status', '')
+                if fact_checking_status == 'completed':
+                    continue
                 for model in sentence_dict:
                     if model == 'raw_text':
+                        continue
+                    if 'pred_labels' in sentence_dict[model] and 'pred_types' in sentence_dict[model] \
+                            and not (
+                            len(sentence_dict[model]['sentences']) > 1 and sentence_dict[model]['pred_labels'] == [0] and sentence_dict[model]['pred_types'] == ['no error']):
                         continue
                     print(model)
                     sentences = sentence_dict[model]['sentences']
@@ -104,6 +105,7 @@ def fact_checking_by_type(model_family='openai'):
                         pred_labels, pred_types = parsing_llm_fact_checking_output(response)
                         sentence_dict[model]['pred_labels'] = pred_labels
                         sentence_dict[model]['pred_types'] = pred_types
+                sentence_dict['fact_checking_status'] = 'completed'
                 with open(os.path.join(folder, file), 'w') as f:
                     f.write(json.dumps(sentence_dict))
             except Exception as e:
