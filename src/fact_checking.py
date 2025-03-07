@@ -1,7 +1,7 @@
 # Created by guxu at 2/27/25
 import json
-import multiprocessing
 import sys
+import traceback
 
 from constants import SUMMARY_DIR, SENTENCE_DIR, TEXT_CATEGORIES
 from utils import get_client, get_response, get_fact_checking_prompt, parsing_llm_fact_checking_output, get_response_from_ollama
@@ -76,14 +76,15 @@ def fact_checking_by_type(model_family='openai'):
         folder = os.path.join(SENTENCE_DIR, t)
         files = os.listdir(folder)
         files.sort()
+        files = files[::4]
+        print(files)
         for file in files:
             print(f'******** {t}-{file} ********')
             try:
                 with open(os.path.join(folder, file), 'r') as f:
                     sentence_dict = json.load(f)
                 raw_text = sentence_dict['raw_text']
-                fact_checking_status = sentence_dict.get('fact_checking_status', '')
-                if fact_checking_status == 'completed':
+                if 'fact_checking_status' in sentence_dict and sentence_dict['fact_checking_status'] == 'completed':
                     continue
                 for model in sentence_dict:
                     if model == 'raw_text':
@@ -100,6 +101,7 @@ def fact_checking_by_type(model_family='openai'):
                         response = get_response(get_client(), prompt, MODEL_OPENAI) if model_family == 'openai' else get_response_from_ollama(MODEL_OLLAMA, prompt, timeout=90)
                     except Exception as e:
                         print(e)
+                        traceback.format_exc()
                         continue
                     if response:
                         pred_labels, pred_types = parsing_llm_fact_checking_output(response)
@@ -110,6 +112,7 @@ def fact_checking_by_type(model_family='openai'):
                     f.write(json.dumps(sentence_dict))
             except Exception as e:
                 print(e)
+                traceback.format_exc()
                 continue
         print(f'{t} completed. {i + 1}/{len(TEXT_CATEGORIES)}')
 
