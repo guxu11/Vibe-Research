@@ -86,7 +86,7 @@ def fact_checking_by_type(t, model_family='openai'):
                 if model == 'raw_text':
                     continue
                 if 'pred_labels' in sentence_dict[model] and 'pred_types' in sentence_dict[model] \
-                    and not (sentence_dict[model]['pred_labels'] == [0] and sentence_dict[model]['pred_types'] == ['no error']):
+                    and not (len(sentence_dict[model]['sentences']) > 1 and sentence_dict[model]['pred_labels'] == [0] and sentence_dict[model]['pred_types'] == ['no error']):
                     continue
                 print(model)
                 sentences = sentence_dict[model]['sentences']
