@@ -76,7 +76,7 @@ def fact_checking_by_type(model_family='openai'):
         folder = os.path.join(SENTENCE_DIR, t)
         files = os.listdir(folder)
         files.sort()
-        files = files[::4]
+        files = files[task_id::4]
         print(files)
         for file in files:
             print(f'******** {t}-{file} ********')
