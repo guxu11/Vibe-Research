@@ -3,7 +3,7 @@ import json
 import os
 from utils import summarize_with_ollama
 import sys
-from constants import OLLAMA_MODEL_LIST, RAW_DATA_DIR, SUMMARY_DIR, OLLAMA_REQUEST_TIME_OUT
+from constants import OLLAMA_MODEL_LIST, RAW_DATA_DIR, REFERENCE_DIR, SUMMARY_DIR, OLLAMA_REQUEST_TIME_OUT, TEXT_CATEGORIES
 
 task_id = int(sys.argv[1])
 OLLAMA_HOST = sys.argv[2]
@@ -12,6 +12,22 @@ print("OLLAMA_HOST: ", OLLAMA_HOST)
 
 white_list = ['raw_text', 'chatgpt-4o-latest']
 
+def add_reference():
+    for t in TEXT_CATEGORIES:
+        type_folder = os.path.join(REFERENCE_DIR, t)
+        for ref in os.listdir(type_folder):
+            ref_path = os.path.join(type_folder, ref)
+            with open(ref_path, 'r') as f:
+                ref_text = f.read()
+            summary_file = ref.replace('.txt', '.json')
+            summary_file_path = os.path.join(SUMMARY_DIR, t, summary_file)
+            if not os.path.exists(summary_file_path):
+                continue
+            with open(summary_file_path, 'r') as f:
+                summary_dict = json.load(f)
+            summary_dict['reference'] = ref_text
+            with open(summary_file_path, 'w') as f:
+                f.write(json.dumps(summary_dict))
 
 def make_summaries():
     t = 'tech'
@@ -63,5 +79,4 @@ def make_summaries():
 
 
 if __name__ == '__main__':
-    make_summaries()
-    # print(models)
+    add_reference()

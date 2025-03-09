@@ -1,7 +1,9 @@
 # Created by guxu at 3/4/25
 RAW_DATA_DIR = "../News Articles"
+REFERENCE_DIR = "../References"
 SUMMARY_DIR = "../summaries"
 SENTENCE_DIR = "../sentences"
+KEYFACT_DIR = "../keyfacts"
 
 OLLAMA_MODELS = {
     'llama3.2': ['1b', '3b'], 'gemma2': ['2b'], 'qwen2.5': ['0.5b', '1.5b', '3b'],

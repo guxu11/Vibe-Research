@@ -1,11 +1,14 @@
 # Created by guxu at 2/27/25
 import concurrent.futures
 import json
+from typing import List
 
 import openai
 import ollama
 import ast
 import pprint
+import multiprocessing
+from pydantic import BaseModel
 
 
 def get_api_key():
@@ -277,17 +280,52 @@ def get_summarization_prompt(transcript):
 
             {transcript}
             """
+class KeyFact(BaseModel):
+    key_facts: List[str]
 
 
-import multiprocessing
-import ollama
+def get_extract_keyfact_prompt(summary):
+    return f'''
+    You will be provided with a summary. Your task is to decompose
+    the summary into a set of "key facts". A "key fact" is a single
+    fact written as briefly and clearly as possible, encompassing at
+    most 2-3 entities.
+    Here are nine examples of key facts to illustrate the desired
+    level of granularity:
+    * Kevin Carr set off on his journey from Haytor.
+    * Kevin Carr set off on his journey from Dartmoor.
+    * Kevin Carr set off on his journey in July 2013.
+    * Kevin Carr is less than 24 hours away from completing his trip.
+    * Kevin Carr ran around the world unsupported.
+    * Kevin Carr ran with his tent.
+    * Kevin Carr is set to break the previous record.
+    * Kevin Carr is set to break the record by 24 hours.
+    * The previous record was held by an Australian.
+    Instruction:
+    First, read the summary carefully.
+    Second, decompose the summary into (at most 16) key facts.
+    
+    Provide your answer in JSON format. The answer should be a
+    dictionary with the key "key facts" containing the key facts as a
+    list:
+    
+    {{"key_facts" ["first key fact", "second key facts", "third key facts"]}}
+    
+    Summary:
+    {summary}
+    '''
+
+def parsing_llm_extract_keyfact_output(output):
+    return json.loads(output)
 
 
-def request_ollama(model, prompt, queue):
+
+def request_ollama(model, prompt, queue, **kwargs):
     try:
         response = ollama.chat(
             model=model,
-            messages=[{"role": "user", "content": prompt.strip()}]
+            messages=[{"role": "user", "content": prompt.strip()}],
+            **kwargs
         )
         queue.put(response['message']['content'])
     except Exception as e:
@@ -309,10 +347,10 @@ def summarize_with_ollama(model, transcript, timeout=60):
 
     return queue.get() if not queue.empty() else ""
 
-def get_response_from_ollama(model, prompt, timeout=60):
+def get_response_from_ollama(model, prompt, timeout=60, **kwargs):
     """ 使用多进程调用 Ollama，支持超时控制 """
     queue = multiprocessing.Queue()
-    process = multiprocessing.Process(target=request_ollama, args=(model, prompt, queue))
+    process = multiprocessing.Process(target=request_ollama, args=(model, prompt, queue), kwargs=kwargs)
     process.start()
 
     if timeout > 0:
@@ -356,9 +394,4 @@ if __name__ == '__main__':
     TimeWarner is to restate its accounts as part of efforts to resolve an inquiry into AOL by US market regulators. It has already offered to pay $300m to settle charges, in a deal that is under review by the SEC. The company said it was unable to estimate the amount it needed to set aside for legal reserves, which it previously set at $500m. It intends to adjust the way it accounts for a deal with German music publisher Bertelsmann's purchase of a stake in AOL Europe, which it had reported as advertising revenue. It will now book the sale of its stake in AOL Europe as a loss on the value of that stake.
 
     '''
-#     print(summarize_with_ollama("llama3.2:3b", raw_text))
-#     print(get_ollama_model_list())
-#     summary = get_response(get_client(), get_summarization_prompt(raw_text), "gpt-4-turbo")
-    summary = '''
-    A formula for an ideal Christmas single has been revealed by British Hit Singles & Albums, including references to Father Christmas, sleigh bells, a children's choir, and charity. The song title should also mention \"Christmas\" in the title and include wishes for peace on earth. Gonna Have a No 1 This Christmas, created by Moped Vs Santa, is the first Christmas single that perfectly combines these elements. Despite Santa not being listed among top chart performers in the book, this allows them to help reclaim his rightful place in British recording history.
-    '''
+    print(get_extract_keyfact_prompt(raw_text))

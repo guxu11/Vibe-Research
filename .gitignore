@@ -4,5 +4,8 @@ summaries/
 sentences/
 .DS_Store
 __pycache__/
+News Articles/
+References/
+keyfacts/
 
 *.log
