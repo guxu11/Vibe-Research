@@ -5,10 +5,12 @@ from utils import summarize_with_ollama
 import sys
 from constants import OLLAMA_MODEL_LIST, RAW_DATA_DIR, REFERENCE_DIR, SUMMARY_DIR, OLLAMA_REQUEST_TIME_OUT, TEXT_CATEGORIES
 
-task_id = int(sys.argv[1])
-OLLAMA_HOST = sys.argv[2]
-os.environ["OLLAMA_HOST"] = OLLAMA_HOST
-print("OLLAMA_HOST: ", OLLAMA_HOST)
+task_id = 0
+if sys.platform.startswith("linux"):
+    task_id = int(sys.argv[1])
+    OLLAMA_HOST = sys.argv[2]
+    os.environ["OLLAMA_HOST"] = OLLAMA_HOST
+    print("OLLAMA_HOST: ", OLLAMA_HOST)
 
 white_list = ['raw_text', 'chatgpt-4o-latest']
 

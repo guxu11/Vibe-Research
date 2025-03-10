@@ -7,10 +7,12 @@ from constants import SUMMARY_DIR, TEXT_CATEGORIES, KEYFACT_DIR, ALIGNMENT_DIR, 
 import json
 import sys
 
-task_id = int(sys.argv[1])
-OLLAMA_HOST = sys.argv[2]
-os.environ["OLLAMA_HOST"] = OLLAMA_HOST
-print("OLLAMA_HOST: ", OLLAMA_HOST)
+task_id = 0
+if sys.platform.startswith("linux"):
+    task_id = int(sys.argv[1])
+    OLLAMA_HOST = sys.argv[2]
+    os.environ["OLLAMA_HOST"] = OLLAMA_HOST
+    print("OLLAMA_HOST: ", OLLAMA_HOST)
 
 def extract_keyfact_single_file(file_path, model):
     with open(file_path, 'r') as f:

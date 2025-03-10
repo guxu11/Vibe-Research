@@ -12,10 +12,12 @@ try:
 except Exception as e:
     pass
 
-task_id = int(sys.argv[1])
-OLLAMA_HOST = sys.argv[2]
-os.environ["OLLAMA_HOST"] = OLLAMA_HOST
-print("OLLAMA_HOST: ", OLLAMA_HOST)
+task_id = 0
+if sys.platform.startswith("linux"):
+    task_id = int(sys.argv[1])
+    OLLAMA_HOST = sys.argv[2]
+    os.environ["OLLAMA_HOST"] = OLLAMA_HOST
+    print("OLLAMA_HOST: ", OLLAMA_HOST)
 
 def split_text_into_sentences(text):
     tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
