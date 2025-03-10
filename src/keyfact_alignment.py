@@ -103,13 +103,14 @@ def compute_keyfact_alignment_all_files(model='llama3.3:latest'):
         files = os.listdir(type_folder)
         files.sort()
         files = files[task_id::4]
+        print(files)
         for file in files:
             print(f'******** {t}-{file} ********')
             sentence_file_path = os.path.join(type_folder, file)
             keyfact_folder_path = os.path.join(KEYFACT_DIR, t, file)
             alignment_folder_path = os.path.join(ALIGNMENT_DIR, t)
             if not os.path.exists(alignment_folder_path):
-                os.makedirs(alignment_folder_path)
+                os.makedirs(alignment_folder_path, exist_ok=True)
             try:
                 alignment_file_path = os.path.join(alignment_folder_path, file)
                 alignment_dict = compute_keyfact_alignment_single_file(sentence_file_path, keyfact_folder_path, alignment_file_path, model)
