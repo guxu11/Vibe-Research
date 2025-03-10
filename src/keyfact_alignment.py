@@ -1,10 +1,9 @@
 # Created by guxu at 2/27/25
 import os
 
-from src.constants import SENTENCE_DIR
 from utils import KeyFact, get_response_from_ollama, get_extract_keyfact_prompt, parsing_llm_extract_keyfact_output, \
     get_keyfact_alighment_prompt, parsing_llm_keyfact_alignment_output, KeyFactAlignments
-from constants import SUMMARY_DIR, TEXT_CATEGORIES, KEYFACT_DIR, ALIGNMENT_DIR
+from constants import SUMMARY_DIR, TEXT_CATEGORIES, KEYFACT_DIR, ALIGNMENT_DIR, SENTENCE_DIR
 import json
 import sys
 
