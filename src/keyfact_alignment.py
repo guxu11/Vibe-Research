@@ -64,11 +64,15 @@ def compute_keyfact_alignment_single_file(sentence_path, keyfact_path, alignment
         "raw_text": raw_text,
         "key_facts": keyfacts
     }
+    if os.path.exists(alignment_path):
+        with open(alignment_path, 'r') as f:
+            alignment_file = f.read()
+        alignment_dict = json.loads(alignment_file)
 
     for model in sentence_object:
         if model == 'raw_text' or model == 'fact_checking_status':
             continue
-        if can_pass(alignment_path, model):
+        if can_pass(alignment_dict, model):
             continue
         print(model)
         sentences = sentence_object[model]['sentences']
@@ -84,16 +88,14 @@ def compute_keyfact_alignment_single_file(sentence_path, keyfact_path, alignment
             continue
     return alignment_dict
 
-def can_pass(alignment_file_path, model):
-    if not os.path.exists(alignment_file_path):
+def can_pass(alignment_dict, model):
+    if not alignment_dict:
         return False
-    with open(alignment_file_path, 'r') as f:
-        alignment_dict = json.load(f)
-        if not model in alignment_dict:
-            return False
-        alignment = alignment_dict[model]
-        if not ('alignments' in alignment and alignment['alignments']):
-            return False
+    if not model in alignment_dict:
+        return False
+    alignment = alignment_dict[model]
+    if not ('alignments' in alignment and alignment['alignments']):
+        return False
     return True
 
 def compute_keyfact_alignment_all_files(model='llama3.3:latest'):
