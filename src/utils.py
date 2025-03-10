@@ -177,6 +177,12 @@ def parsing_llm_fact_checking_output(output):
 Two functions for keyfact alignment
 '''
 
+class KeyFactAlignments(BaseModel):
+    class KeyFactAlignment(BaseModel):
+        key_fact_number: int
+        response: bool
+        line_numbers: List[int]
+    alignments: List[KeyFactAlignment]
 
 def get_keyfact_alighment_prompt(keyfacts, sentences):
     ''' A function to define the input prompt
@@ -187,10 +193,12 @@ def get_keyfact_alighment_prompt(keyfacts, sentences):
         prompt: the final input prompt
     '''
 
+    num_sentences = str(len(sentences))
     summary = ['[' + str(line_num + 1) + '] ' + sentence for line_num, sentence in enumerate(sentences)]
     summary = '\n'.join(summary)
     num_key_facts = str(len(keyfacts))
-    key_facts = '\n'.join(keyfacts)
+    key_facts = ['[' + str(line_num + 1) + '] ' + keyfact for line_num, keyfact in enumerate(keyfacts)]
+    key_facts = '\n'.join(key_facts)
 
     prompt = \
         '''
@@ -198,17 +206,20 @@ def get_keyfact_alighment_prompt(keyfacts, sentences):
         
         Instruction:
         First, compare each key fact with the summary.
-        Second, check if the key fact is inferred from the summary and then response "Yes" or "No" for each key fact. If "Yes", specify the line number(s) of the summary sentence(s) relevant to each key fact. 
+        Second, check if the key fact is inferred from the summary and then response "True" or "False" for each key fact. If "True", specify the line_numbers of the summary sentence(s) relevant to each key fact. 
         
-        Provide your answer in JSON format. The answer should be a list of dictionaries whose keys are "key fact", "response", and "line number":
-        [{"key fact": "first key fact", "response": "Yes", "line number": [1]}, {"key fact": "second key fact", "response": "No", "line number": []}, {"key fact": "third key fact", "response": "Yes", "line number": [1, 2, 3]}]
+        Provide your answer in JSON format. The answer should be a list of dictionaries whose keys are "key_fact_number", "response", and "line_numbers":
+        {"alignments": [{"key_fact_number": 1, "response": "True", "line_numbers": [1]}, {"key_fact_number": 2, "response": "False", "line_numbers": []}, {"key_fact_number": 3, "response": "True", "line_numbers": [1, 2, 3]}]}
         
+        
+        There are %s lines in the summary.
         Summary:
         %s
         
-        %s key facts:
+        There are %s key facts.
+        key facts:
         %s
-        ''' % (summary, num_key_facts, key_facts)
+        ''' % (num_sentences, summary, num_key_facts, key_facts)
 
     return prompt
 
@@ -252,7 +263,8 @@ def parsing_llm_keyfact_alighment_output(output):
     except Exception as e:
         print(e)
         return [], []
-
+def parsing_llm_keyfact_alignment_output(output):
+    return json.loads(output)
 
 '''
  Score funtions

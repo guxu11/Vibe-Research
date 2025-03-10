@@ -1,8 +1,10 @@
 # Created by guxu at 2/27/25
 import os
 
-from utils import KeyFact, get_response_from_ollama, get_extract_keyfact_prompt, parsing_llm_extract_keyfact_output
-from constants import SUMMARY_DIR, TEXT_CATEGORIES, KEYFACT_DIR
+from src.constants import SENTENCE_DIR
+from utils import KeyFact, get_response_from_ollama, get_extract_keyfact_prompt, parsing_llm_extract_keyfact_output, \
+    get_keyfact_alighment_prompt, parsing_llm_keyfact_alignment_output, KeyFactAlignments
+from constants import SUMMARY_DIR, TEXT_CATEGORIES, KEYFACT_DIR, ALIGNMENT_DIR
 import json
 import sys
 
@@ -50,5 +52,77 @@ def extract_keyfact_all_files(model='llama3.3:latest'):
                 f.write(json.dumps(json_object))
         print(f'{t} completed. {i + 1}/{len(TEXT_CATEGORIES)}')
 
+def compute_keyfact_alignment_single_file(sentence_path, keyfact_path, alignment_path, llm):
+    with open(sentence_path, 'r') as f:
+        sentence_file = f.read()
+    sentence_object = json.loads(sentence_file)
+    raw_text = sentence_object['raw_text']
+    with open(keyfact_path, 'r') as f:
+        keyfact_file = f.read()
+    keyfact_object = json.loads(keyfact_file)
+    keyfacts = keyfact_object['key_facts']
+    alignment_dict = {
+        "raw_text": raw_text,
+        "key_facts": keyfacts
+    }
+
+    for model in sentence_object:
+        if model == 'raw_text' or model == 'fact_checking_status':
+            continue
+        if can_pass(alignment_path, model):
+            continue
+        print(model)
+        sentences = sentence_object[model]['sentences']
+        prompt = get_keyfact_alighment_prompt(keyfacts=keyfacts, sentences=sentences)
+        try:
+            response = get_response_from_ollama(llm, prompt, format=KeyFactAlignments.model_json_schema())
+            alignment_json = parsing_llm_keyfact_alignment_output(response)
+            alignment_dict[model] = {}
+            alignment_dict[model].update({'sentences': sentences})
+            alignment_dict[model].update(alignment_json)
+        except Exception as e:
+            print(f"Error processing {model}: {e}")
+            continue
+    return alignment_dict
+
+def can_pass(alignment_file_path, model):
+    if not os.path.exists(alignment_file_path):
+        return False
+    with open(alignment_file_path, 'r') as f:
+        alignment_dict = json.load(f)
+        if not model in alignment_dict:
+            return False
+        alignment = alignment_dict[model]
+        if not ('alignments' in alignment and alignment['alignments']):
+            return False
+    return True
+
+def compute_keyfact_alignment_all_files(model='llama3.3:latest'):
+    for i, t in enumerate(TEXT_CATEGORIES):
+        print(t)
+        type_folder = os.path.join(SENTENCE_DIR, t)
+        files = os.listdir(type_folder)
+        files.sort()
+        files = files[task_id::4]
+        for file in files:
+            print(f'******** {t}-{file} ********')
+            sentence_file_path = os.path.join(type_folder, file)
+            keyfact_folder_path = os.path.join(KEYFACT_DIR, t, file)
+            alignment_folder_path = os.path.join(ALIGNMENT_DIR, t)
+            if not os.path.exists(alignment_folder_path):
+                os.makedirs(alignment_folder_path)
+            try:
+                alignment_file_path = os.path.join(alignment_folder_path, file)
+                alignment_dict = compute_keyfact_alignment_single_file(sentence_file_path, keyfact_folder_path, alignment_file_path, model)
+                with open(alignment_file_path, 'w') as f:
+                    f.write(json.dumps(alignment_dict))
+            except Exception as e:
+                print(e)
+                continue
+        print(f'{t} completed. {i + 1}/{len(TEXT_CATEGORIES)}')
+
+
+
 if __name__ == '__main__':
-    extract_keyfact_all_files()
+    # extract_keyfact_all_files()
+    compute_keyfact_alignment_all_files()
