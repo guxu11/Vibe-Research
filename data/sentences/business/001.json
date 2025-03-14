@@ -1,0 +1,141 @@
+{
+  "raw_text": "Ad sales boost Time Warner profit\n \n Quarterly profits at US media giant TimeWarner jumped 76% to $1.13bn (\u00a3600m) for the three months to December, from $639m year-earlier.\n \n The firm, which is now one of the biggest investors in Google, benefited from sales of high-speed internet connections and higher advert sales. TimeWarner said fourth quarter sales rose 2% to $11.1bn from $10.9bn. Its profits were buoyed by one-off gains which offset a profit dip at Warner Bros, and less users for AOL.\n \n Time Warner said on Friday that it now owns 8% of search-engine Google. But its own internet business, AOL, had has mixed fortunes. It lost 464,000 subscribers in the fourth quarter profits were lower than in the preceding three quarters. However, the company said AOL's underlying profit before exceptional items rose 8% on the back of stronger internet advertising revenues. It hopes to increase subscribers by offering the online service free to TimeWarner internet customers and will try to sign up AOL's existing customers for high-speed broadband. TimeWarner also has to restate 2000 and 2003 results following a probe by the US Securities Exchange Commission (SEC), which is close to concluding.\n \n Time Warner's fourth quarter profits were slightly better than analysts' expectations. But its film division saw profits slump 27% to $284m, helped by box-office flops Alexander and Catwoman, a sharp contrast to year-earlier, when the third and final film in the Lord of the Rings trilogy boosted results. For the full-year, TimeWarner posted a profit of $3.36bn, up 27% from its 2003 performance, while revenues grew 6.4% to $42.09bn. \"Our financial performance was strong, meeting or exceeding all of our full-year objectives and greatly enhancing our flexibility,\" chairman and chief executive Richard Parsons said. For 2005, TimeWarner is projecting operating earnings growth of around 5%, and also expects higher revenue and wider profit margins.\n \n TimeWarner is to restate its accounts as part of efforts to resolve an inquiry into AOL by US market regulators. It has already offered to pay $300m to settle charges, in a deal that is under review by the SEC. The company said it was unable to estimate the amount it needed to set aside for legal reserves, which it previously set at $500m. It intends to adjust the way it accounts for a deal with German music publisher Bertelsmann's purchase of a stake in AOL Europe, which it had reported as advertising revenue. It will now book the sale of its stake in AOL Europe as a loss on the value of that stake.\n",
+  "llama3.2:1b": [
+    "Time Warner's quarterly profits jumped 76% to $1.13bn ($600m) for the three months to December from $639m year-earlier, driven by sales of high-speed internet connections and higher advert sales.",
+    "The company owns 8% of Google, but its own internet business had mixed fortunes with a loss in subscriber numbers and lower profits.",
+    "Time Warner's film division saw profits slump 27% to $284m due to box-office flops.",
+    "For the full year, the company posted a profit of $3.36bn, up 27%, and is projecting operating earnings growth of around 5%."
+  ],
+  "llama3.2:3b": [
+    "Time Warner reported quarterly profits of $1.13bn, a 76% increase from last year, driven by high-speed internet sales and higher ad revenue.",
+    "The company's film division saw profits slump 27%.",
+    "Time Warner now owns 8% of Google and aims to boost AOL subscribers by offering the service for free."
+  ],
+  "gemma2:2b": [
+    "Time Warner's fourth quarter profits increased by 76% to $1.13 billion.",
+    "The increase was driven by high-speed internet sales and higher ad revenues.",
+    "AOL lost subscribers but its underlying profit improved.",
+    "Time Warner now owns 8% of Google.",
+    "The company expects continued growth in 2005, with higher revenue and profit margins.",
+    "It is also re-stating financial results due to SEC inquiries into AOL's activities."
+  ],
+  "qwen2.5:0.5b": [
+    "Time Warner's quarterly profits climbed 76% to $1.13bn (\u00a3600m), marking a significant boost for the company.",
+    "The firm benefited from increased internet sales and higher advertisement revenue, which offset a dip in results at its film division and AOL.",
+    "Time Warner aims to increase subscribers by offering free broadband service to AOL customers and restate operating earnings as part of an ongoing investigation into AOL's financial performance.",
+    "The full-year profit is forecasted to be $3.36bn, up 27% from the previous year's $2.84bn, with revenues growing by 6.4%.",
+    "The company also plans to set aside a further $50m for legal reserves in its attempt to resolve an inquiry into AOL's financial performance.",
+    "This growth is driven by increased internet sales and advertising revenue, which contributed to higher profit margins compared to the previous quarter."
+  ],
+  "qwen2.5:1.5b": [
+    "Time Warner saw quarterly profits jump 76% to $1.13bn (\u00a3600m) from $639m year-earlier due to increased ad sales and internet connection revenue, with underlying profit for its AOL unit rising 8%.",
+    "The company now owns 8% of Google but experienced mixed fortunes in the Internet business, losing subscribers but seeing strong earnings growth."
+  ],
+  "qwen2.5:3b": [
+    "Quarterly profits at Time Warner increased 76% to $1.13bn for the December quarter, benefiting from high-speed internet connections and higher advert sales.",
+    "Sales rose 2% to $11.1bn from $10.9bn.",
+    "The firm now owns 8% of Google but AOL's subscriber numbers fell by 464,000 despite an increase in underlying profit before exceptional items.",
+    "Time Warner also had to restate its accounts due to SEC probe into AOL.",
+    "Its film division saw profits dip 27%, while its full-year profit was up 27% at $3.36bn with revenues growing by 6.4%.",
+    "The company is projecting around 5% operating earnings growth in 2005, higher revenue and wider profit margins."
+  ],
+  "opencoder:1.5b": [
+    "Ad sales boost Time Warner profit\n\nQuarterly profits at US media giant TimeWarner jumped 76% to $1.13bn (\u00a3600m) for the three months to December, from $639m year-earlier.",
+    "Time Warner benefited from sales of high-speed internet connections and higher advert sales.",
+    "The firm said fourth quarter sales rose 2% to $11.1bn from $10.9bn.",
+    "Time Warner's profits were buoyed by one-off gains which offset a profit dip at Warner Bros, and less users for AOL.",
+    "Time Warner said it now owns 8% of search-engine Google.",
+    "But its own internet business, AOL, had has mixed fortunes.",
+    "It lost 464,000 subscribers in the four quarters profits were lower than in the preceding three quarters.",
+    "However, AOL\u2019s underlying profit before exceptional items rose 8% on the back of stronger internet advertising revenues.",
+    "Time Warner is to restate its accounts as part of efforts to resolve an inquiry into AOL by US market regulators.",
+    "It has already offered to pay $300m to settle charges, in a deal that is under review by the SEC.",
+    "The company said it was unable to estimate the amount it needed to set aside for legal reserves, which it previously set at $500m.",
+    "Time Warner plans to adjust the way it accounts for a German music publisher Bertelsmann's purchase of a stake in AOL Europe as a loss on the value of that stake."
+  ],
+  "smollm:1.7b": [
+    "The text is concise and to the point, summarizing the key ideas and details of the text without adding any additional information or explanations.",
+    "The summary should preserve the original meaning and tone of the text while avoiding unnecessary words and phrases."
+  ],
+  "deepseek-r1:1.5b": [
+    "Time Warner's quarterly profits surged to $1.13 billion in the third quarter, up 76% from the previous year, driven by increased sales of high-speed internet connections and higher advertising revenue.",
+    "The company invested in Google and saw subscriber growth while reporting a positive impact on its underlying profit before exceptional items.",
+    "AOL's lower subscriber numbers were partially offset by stronger advertising revenues, boosting overall profitability.",
+    "Time Warner plans to offer free online service to its own customers to increase subscriber base and explore new subscription deals with AOL.",
+    "Additionally, the company must adjust its financial statements due to regulatory scrutiny over a potential deal involving Bertelsmann.",
+    "For 2005, Time Warner aims for 5% earnings growth and expects higher revenue and profit margins."
+  ],
+  "tinyllama:1.1b": [
+    "The US media giant Time Warner reported a 76% increase in quarterly profits to $1.13 billion, driven by higher advertising sales and higher internet connection subscriptions.",
+    "In addition, fourth-quarter earnings were boosted by one-off gains, offsetting a dip in profit at its search engine Google.",
+    "The company's film division saw a 27% decline in profits to $284 million, but revenues rose slightly due to box-office flops Alexander and Catwoman.",
+    "Time Warner expects solid financial performance for the full year, with operating earnings growth projected at around 5%, and also plans to settle an inquiry by regulators as part of efforts to resolve a probe into AOL.",
+    "The company has offered to pay $300 million to settle charges related to its settlement with market regulators.",
+    "It is adjusting the way it accounts for the sale of its stake in AOL Europe, previously booked as advertising revenues."
+  ],
+  "tinydolphin:1.1b": [
+    " Time Warner, a leading media and telecommunications giant, saw profits surge by 76% to $1.13bn (\u00a3600m) for the quarter ended December 2005, from $639m in previous year's earnings.",
+    "Sales at the firm increased by 2% to $11.1bn, as higher internet connection sales and advertising revenues offset a decline in user count for AOL.",
+    "The company's film division experienced better-than-anticipated profits due to box-office successes like Alexander and Catwoman.",
+    "However, its film division faced losses of $284m on lower revenue from the Lord of the Rings trilogy.",
+    "In a bid to recover, Time Warner restated its financial statements for the fourth quarter of 2005.",
+    "This move was part of the company's efforts to address SEC charges filed against it by US market regulators regarding AOL, a deal the company had previously paid $300m in settlement of the inquiry.",
+    "It has also offered to pay an additional $300m to settle charges brought by US regulators regarding AOL's ownership of certain German music rights.",
+    "The company intends to adjust its accounting methodology for AOL Europe, which it had previously reported as advertising revenue.",
+    "This decision is a part of the corporation's strategy to increase its flexibility in managing its operations.",
+    "In response to these restatements, analysts have projected lower forecasts for 2005 and 2006, but Time Warner plans to exceed these projections by 5%.",
+    "The company has also set aside $500m to cover potential legal reserves related to AOL."
+  ],
+  "phi:2.7b": [
+    " Time Warner's quarterly profits increased by 76% to $1.13 billion due to higher internet sales and advert sales.",
+    "Its internet business, AOL, has seen mixed fortunes with a decline in subscribers but an increase in underlying profit before exceptional items from stronger advertising revenues.",
+    "The company owns 8% of Google but had to restate its accounts following an SEC probe.",
+    "For the full year, Time Warner posted a 27% rise in profits and expects higher revenue and wider profit margins for 2006.",
+    "It will have to pay $300 million as part of a deal with the SEC to settle charges and has already set aside $500 million for legal reserves.",
+    "A deal with Bertelsmann' s music publisher will be recorded as a loss on the value of AOL Europe's stake in the company."
+  ],
+  "orca-mini:3b": [
+    " Time Warner's fourth quarter profit jumped 76% to $1.13bn from $639m, while sales rose 2%.",
+    "The company attributed the boost to higher ad sales and higher advert sales.",
+    "However, its film division saw a 27% drop in profits due to box office flops.",
+    "Time Warner also expects higher revenue and wider profit margins for 2005, but it has to restate accounts as it faces an inquiry from US market regulators."
+  ],
+  "hermes3:3b": [
+    "Time Warner doubles quarterly profit to $1.13b, boosted by ad sales and internet connections."
+  ],
+  "stablelm-zephyr:3b": [
+    "Time Warner's profits increased by 76% to $1.13bn during Q4 2020 due to higher advert sales and Google investment.",
+    "The company owns 8% of search engine Google and aims to boost AOL subscribers by offering it for free to TimeWarner customers and signing up existing AOL customers for high-speed broadband.",
+    "Time Warner restated its accounts as part of an inquiry into AOL by US market regulators, potentially settling charges with $300m."
+  ],
+  "stablelm2:1.6b": [
+    "Time Warner's quarterly profits increased by 2% to $1.0bn, mainly due to higher ad sales and faster internet connections.",
+    "The company owns 8% of Google and is one of the biggest investors in Google.",
+    "Time Warner's film division saw profits drop 30%.",
+    "In Q5, the company posted a profit of $3.0bn, up from $3.03m, while revenues grew 6.4% to $2.9bn.",
+    "It aims for operating earnings growth of around 5%, higher revenue, and wider profit margins.",
+    "Time Warner is also facing scrutiny over its AOL subsidiary following a probe by the US Securities Exchange Commission."
+  ],
+  "granite3.1-dense:2b": [
+    "Time Warner, a major US media conglomerate, experienced a 76% surge in quarterly profits to $1.13bn for Q4 2005, compared to $639m in Q4 2004, primarily due to increased internet sales and higher advert revenues.",
+    "The company now owns 8% of Google, contributing to its growth.",
+    "However, AOL's subscriber base decreased by 464,000 subscribers during this period.",
+    "Despite this, AOL's underlying profit before exceptional items rose 8%, driven by stronger internet advertising revenues.",
+    "Time Warner aims to boost AOL's subscriber count by offering free online services to its internet customers and encouraging existing users to switch to high-speed broadband.",
+    "Time Warner reported a full-year profit of $3.36bn, up 27% from 2003, with revenues growing 6.4% to $42.09bn.",
+    "Chairman and CEO Richard Parsons expressed satisfaction with the company's strong financial performance, meeting or surpassing all full-year objectives.",
+    "For 2005, Time Warner forecasts around 5% operating earnings growth, higher revenues, and wider profit margins.",
+    "The company is preparing to restore its accounts as part of an ongoing SEC inquiry into AOL, following a $300m offer to settle charges related to the acquisition of a stake in AOL Europe by Bertelsmann.",
+    "Time Warner aims to adjust its accounting methods for this transaction, now classifying it as a loss on the value of the stake rather than advertising revenue.",
+    "The company cannot estimate the required legal reserve amount and has previously set it at $500m."
+  ],
+  "chatgpt-4o-latest": [
+    "TimeWarner's quarterly profits rose 76% to $1.13bn, driven by high-speed internet sales and increased ad revenue.",
+    "Despite a decline in AOL subscribers, AOL's underlying profit grew 8% due to stronger internet advertising.",
+    "TimeWarner now owns 8% of Google and aims to boost AOL subscriptions by offering free online services to its internet customers.",
+    "The company must restate past financial results following an SEC probe and has offered $300m to settle charges.",
+    "Its film division saw a 27% profit drop due to box-office failures, contrasting with the previous year's success from The Lord of the Rings.",
+    "Full-year profits rose 27% to $3.36bn, with revenues up 6.4% to $42.09bn.",
+    "TimeWarner projects 5% operating earnings growth for 2005 and expects higher revenue and profit margins."
+  ]
+}

@@ -2,4 +2,5 @@ openai
 ollama
 pyyaml
 nltk
-sqlite3
+pandas
+numpy

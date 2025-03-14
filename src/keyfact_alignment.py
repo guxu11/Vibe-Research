@@ -3,7 +3,7 @@ import os
 
 from utils import KeyFact, get_response_from_ollama, get_extract_keyfact_prompt, parsing_llm_extract_keyfact_output, \
     get_keyfact_alighment_prompt, parsing_llm_keyfact_alignment_output, KeyFactAlignments
-from constants import SUMMARY_DIR, TEXT_CATEGORIES, KEYFACT_DIR, ALIGNMENT_DIR, SENTENCE_DIR
+from constants import SUMMARY_DIR, TEXT_CATEGORIES, OLLAMA_KEYFACT_DIR, OLLAMA_ALIGNMENT_DIR, SENTENCE_DIR
 import json
 import sys
 
@@ -44,7 +44,7 @@ def extract_keyfact_all_files(model='llama3.3:latest'):
         for file in files:
             print(f'******** {t}-{file} ********')
             summary_file_path = os.path.join(type_folder, file)
-            keyfact_folder_path = os.path.join(KEYFACT_DIR, t)
+            keyfact_folder_path = os.path.join(OLLAMA_KEYFACT_DIR, t)
             if not os.path.exists(keyfact_folder_path):
                 os.makedirs(keyfact_folder_path)
             keyfact_file_path = os.path.join(keyfact_folder_path, file)
@@ -111,8 +111,8 @@ def compute_keyfact_alignment_all_files(model='llama3.3:latest'):
         for file in files:
             print(f'******** {t}-{file} ********')
             sentence_file_path = os.path.join(type_folder, file)
-            keyfact_folder_path = os.path.join(KEYFACT_DIR, t, file)
-            alignment_folder_path = os.path.join(ALIGNMENT_DIR, t)
+            keyfact_folder_path = os.path.join(OLLAMA_KEYFACT_DIR, t, file)
+            alignment_folder_path = os.path.join(OLLAMA_ALIGNMENT_DIR, t)
             if not os.path.exists(alignment_folder_path):
                 os.makedirs(alignment_folder_path, exist_ok=True)
             try:

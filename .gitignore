@@ -1,11 +1,9 @@
 .venv
 .env
-summaries/
-sentences/
 .DS_Store
 __pycache__/
-News Articles/
-References/
-keyfacts/
+ollama_output/
+gpt_output/
+result/
 
 *.log
