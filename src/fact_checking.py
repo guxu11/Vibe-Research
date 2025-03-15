@@ -3,7 +3,7 @@ import json
 import sys
 import traceback
 
-from constants import SUMMARY_DIR, SENTENCE_DIR, TEXT_CATEGORIES
+from constants import SUMMARY_DIR, SENTENCE_DIR, TEXT_CATEGORIES, GPT_FACTERROR_DIR, OLLAMA_FACTERROR_DIR
 from utils import get_client, get_response, get_fact_checking_prompt, parsing_llm_fact_checking_output, get_response_from_ollama
 import os
 import re
@@ -75,28 +75,36 @@ MODEL_OLLAMA = "llama3.3:latest"
 def fact_checking_by_type(model_family='openai'):
     for i, t in enumerate(TEXT_CATEGORIES):
         print(t)
-        folder = os.path.join(SENTENCE_DIR, t)
-        files = os.listdir(folder)
+        sentence_folder = os.path.join(SENTENCE_DIR, t)
+        factorrator_folder = os.path.join(GPT_FACTERROR_DIR, t) if model_family == 'openai' else os.path.join(OLLAMA_FACTERROR_DIR, t)
+        os.makedirs(factorrator_folder, exist_ok=True)
+        files = os.listdir(sentence_folder)
         files.sort()
         files = files[task_id::4]
         print(files)
         for file in files:
             print(f'******** {t}-{file} ********')
             try:
-                with open(os.path.join(folder, file), 'r') as f:
+                with open(os.path.join(sentence_folder, file), 'r') as f:
                     sentence_dict = json.load(f)
                 raw_text = sentence_dict['raw_text']
-                if 'fact_checking_status' in sentence_dict and sentence_dict['fact_checking_status'] == 'completed':
+                factorrator_file = os.path.join(factorrator_folder, file)
+                factorrator_dict = {'raw_text': raw_text}
+                if os.path.exists(factorrator_file):
+                    with open(factorrator_file, 'r') as f:
+                        factorrator_dict = json.load(f)
+                if 'fact_checking_status' in factorrator_dict and factorrator_dict['fact_checking_status'] == 'completed':
                     continue
                 for model in sentence_dict:
                     if model == 'raw_text':
                         continue
-                    if 'pred_labels' in sentence_dict[model] and 'pred_types' in sentence_dict[model] \
+                    if model in factorrator_dict and 'pred_labels' in factorrator_dict[model] and 'pred_types' in sentence_dict[model] \
                             and not (
-                            len(sentence_dict[model]['sentences']) > 1 and sentence_dict[model]['pred_labels'] == [0] and sentence_dict[model]['pred_types'] == ['no error']):
+                            len(factorrator_dict[model]['sentences']) > 1 and factorrator_dict[model]['pred_labels'] == [0] and factorrator_dict[model]['pred_types'] == ['no error']):
                         continue
                     print(model)
-                    sentences = sentence_dict[model]['sentences']
+                    sentences = sentence_dict[model]
+                    factorrator_dict.update({model: {"sentences": sentences}})
                     prompt = get_fact_checking_prompt(raw_text, sentences)
                     response = ""
                     try:
@@ -107,11 +115,11 @@ def fact_checking_by_type(model_family='openai'):
                         continue
                     if response:
                         pred_labels, pred_types = parsing_llm_fact_checking_output(response)
-                        sentence_dict[model]['pred_labels'] = pred_labels
-                        sentence_dict[model]['pred_types'] = pred_types
-                sentence_dict['fact_checking_status'] = 'completed'
-                with open(os.path.join(folder, file), 'w') as f:
-                    f.write(json.dumps(sentence_dict))
+                        factorrator_dict[model].update({'pred_labels': pred_labels})
+                        factorrator_dict[model].update({'pred_types': pred_types})
+                factorrator_dict.update({'fact_checking_status': 'completed'})
+                with open(factorrator_file, 'w') as f:
+                    f.write(json.dumps(factorrator_dict))
             except Exception as e:
                 print(e)
                 traceback.format_exc()
@@ -120,5 +128,5 @@ def fact_checking_by_type(model_family='openai'):
 
 
 if __name__ == '__main__':
-    fact_checking_by_type('ollama')
+    fact_checking_by_type()
     print("🎉 All tasks completed!")
