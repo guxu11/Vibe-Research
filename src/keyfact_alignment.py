@@ -1,9 +1,8 @@
 # Created by guxu at 2/27/25
 import os
 
-from utils import KeyFact, get_response_from_ollama, get_extract_keyfact_prompt, parsing_llm_extract_keyfact_output, \
-    get_keyfact_alighment_prompt, parsing_llm_keyfact_alignment_output, KeyFactAlignments
-from constants import SUMMARY_DIR, TEXT_CATEGORIES, OLLAMA_KEYFACT_DIR, OLLAMA_ALIGNMENT_DIR, SENTENCE_DIR
+from utils import *
+from constants import SUMMARY_DIR, TEXT_CATEGORIES, OLLAMA_KEYFACT_DIR, OLLAMA_ALIGNMENT_DIR, SENTENCE_DIR, BASELINE_MODEL, GPT_KEYFACT_DIR
 import json
 import sys
 
@@ -14,7 +13,7 @@ if sys.platform.startswith("linux"):
     os.environ["OLLAMA_HOST"] = OLLAMA_HOST
     print("OLLAMA_HOST: ", OLLAMA_HOST)
 
-def extract_keyfact_single_file(file_path, model):
+def extract_keyfact_single_file(file_path, model_family='openai'):
     with open(file_path, 'r') as f:
         summary_json = f.read()
     json_object = json.loads(summary_json)
@@ -27,28 +26,29 @@ def extract_keyfact_single_file(file_path, model):
     }
     prompt = get_extract_keyfact_prompt(reference)
     try:
-        response = get_response_from_ollama(model, prompt, format=KeyFact.model_json_schema())
+        response = get_response(client=get_client(), prompt=prompt, model=BASELINE_MODEL, response_format={ "type": "json_object" }) if model_family == 'openai' \
+            else get_response_from_ollama('llama3.3:latest', prompt, format=KeyFact.model_json_schema())
         keyfacts = parsing_llm_extract_keyfact_output(response)
         json_object.update(keyfacts)
     except Exception as e:
         print(f"Error processing {file_path}: {e}")
     return json_object
 
-def extract_keyfact_all_files(model='llama3.3:latest'):
+def extract_keyfact_all_files(model_family='openai'):
     for i, t in enumerate(TEXT_CATEGORIES):
         print(t)
-        type_folder = os.path.join(SUMMARY_DIR, t)
-        files = os.listdir(type_folder)
+        summary_path = os.path.join(SUMMARY_DIR, t)
+        to_folder = os.path.join(GPT_KEYFACT_DIR, t) if model_family == 'openai' else os.path.join(OLLAMA_KEYFACT_DIR, t)
+        os.makedirs(to_folder, exist_ok=True)
+        files = os.listdir(summary_path)
         files.sort()
         files = files[task_id::4]
+        print(files)
         for file in files:
             print(f'******** {t}-{file} ********')
-            summary_file_path = os.path.join(type_folder, file)
-            keyfact_folder_path = os.path.join(OLLAMA_KEYFACT_DIR, t)
-            if not os.path.exists(keyfact_folder_path):
-                os.makedirs(keyfact_folder_path)
-            keyfact_file_path = os.path.join(keyfact_folder_path, file)
-            json_object = extract_keyfact_single_file(summary_file_path, model)
+            summary_file_path = os.path.join(summary_path, file)
+            keyfact_file_path = os.path.join(to_folder, file)
+            json_object = extract_keyfact_single_file(summary_file_path, model_family)
             with open(keyfact_file_path, 'w') as f:
                 f.write(json.dumps(json_object))
         print(f'{t} completed. {i + 1}/{len(TEXT_CATEGORIES)}')
@@ -128,5 +128,4 @@ def compute_keyfact_alignment_all_files(model='llama3.3:latest'):
 
 
 if __name__ == '__main__':
-    # extract_keyfact_all_files()
-    compute_keyfact_alignment_all_files()
+    extract_keyfact_all_files()

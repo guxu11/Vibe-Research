@@ -32,7 +32,7 @@ ERROR_TYPES = ['out-of-context error', 'entity error', 'predicate error', 'circu
                'coreference error', 'linking error', 'other error']
 
 
-def get_response(client, prompt, model, temperature=0.0):
+def get_response(client, prompt, model, temperature=0.0, **kwargs):
     ''' A function to get the response from GPT-series
     Args:
         client: openai client
@@ -45,8 +45,30 @@ def get_response(client, prompt, model, temperature=0.0):
     response = client.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}],
-        temperature=temperature)
+        temperature=temperature,
+        **kwargs
+    )
     text_response = response.choices[0].message.content
+
+    return text_response
+
+def get_GPT_response_v2(client, prompt, model, temperature=0.0, **kwargs):
+    ''' A function to get the response from GPT-series
+    Args:
+        client: openai client
+        prompt: input prompt
+        model: openai model name
+    Return:
+        text_response: the output from LLMs
+    '''
+
+    completion = client.beta.chat.completions.parse(
+        model=model,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=temperature,
+        **kwargs
+    )
+    text_response = completion.choices[0].message.parsed
 
     return text_response
 
