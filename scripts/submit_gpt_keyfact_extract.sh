@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=gpt_summary
+#SBATCH --job-name=keyfact_extract
 #SBATCH --output=gpt_fact_check_%A_%a.log
 #SBATCH --time=12:00:00
 #SBATCH --partition=cpucluster

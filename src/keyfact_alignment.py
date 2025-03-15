@@ -2,7 +2,7 @@
 import os
 
 from utils import *
-from constants import SUMMARY_DIR, TEXT_CATEGORIES, OLLAMA_KEYFACT_DIR, OLLAMA_ALIGNMENT_DIR, SENTENCE_DIR, BASELINE_MODEL, GPT_KEYFACT_DIR
+from constants import SUMMARY_DIR, TEXT_CATEGORIES, OLLAMA_KEYFACT_DIR, OLLAMA_ALIGNMENT_DIR, SENTENCE_DIR, BASELINE_MODEL, GPT_KEYFACT_DIR, GPT_ALIGNMENT_DIR
 import json
 import sys
 
@@ -53,7 +53,7 @@ def extract_keyfact_all_files(model_family='openai'):
                 f.write(json.dumps(json_object))
         print(f'{t} completed. {i + 1}/{len(TEXT_CATEGORIES)}')
 
-def compute_keyfact_alignment_single_file(sentence_path, keyfact_path, alignment_path, llm):
+def compute_keyfact_alignment_single_file(sentence_path, keyfact_path, alignment_path, model_family='openai'):
     with open(sentence_path, 'r') as f:
         sentence_file = f.read()
     sentence_object = json.loads(sentence_file)
@@ -72,15 +72,16 @@ def compute_keyfact_alignment_single_file(sentence_path, keyfact_path, alignment
         alignment_dict = json.loads(alignment_file)
 
     for model in sentence_object:
-        if model == 'raw_text' or model == 'fact_checking_status':
+        if model == 'raw_text':
             continue
         if can_pass(alignment_dict, model):
             continue
         print(model)
-        sentences = sentence_object[model]['sentences']
+        sentences = sentence_object[model]
         prompt = get_keyfact_alighment_prompt(keyfacts=keyfacts, sentences=sentences)
         try:
-            response = get_response_from_ollama(llm, prompt, format=KeyFactAlignments.model_json_schema())
+            response = get_response(client=get_client(), prompt=prompt, model=BASELINE_MODEL, response_format={ "type": "json_object" }) if model_family == 'openai' \
+                else get_response_from_ollama('llama3.3:latest', prompt, format=KeyFactAlignments.model_json_schema())
             alignment_json = parsing_llm_keyfact_alignment_output(response)
             alignment_dict[model] = {}
             alignment_dict[model].update({'sentences': sentences})
@@ -100,24 +101,23 @@ def can_pass(alignment_dict, model):
         return False
     return True
 
-def compute_keyfact_alignment_all_files(model='llama3.3:latest'):
+def compute_keyfact_alignment_all_files(model_family='openai'):
     for i, t in enumerate(TEXT_CATEGORIES):
         print(t)
-        type_folder = os.path.join(SENTENCE_DIR, t)
-        files = os.listdir(type_folder)
+        sentence_folder = os.path.join(SENTENCE_DIR, t)
+        files = os.listdir(sentence_folder)
         files.sort()
         files = files[task_id::4]
         print(files)
         for file in files:
             print(f'******** {t}-{file} ********')
-            sentence_file_path = os.path.join(type_folder, file)
-            keyfact_folder_path = os.path.join(OLLAMA_KEYFACT_DIR, t, file)
-            alignment_folder_path = os.path.join(OLLAMA_ALIGNMENT_DIR, t)
-            if not os.path.exists(alignment_folder_path):
-                os.makedirs(alignment_folder_path, exist_ok=True)
+            sentence_file_path = os.path.join(sentence_folder, file)
+            keyfact_file_path = os.path.join(GPT_KEYFACT_DIR, t, file) if model_family == 'openai' else os.path.join(OLLAMA_KEYFACT_DIR, t, file)
+            alignment_folder_path = os.path.join(GPT_ALIGNMENT_DIR, t) if model_family == 'openai' else os.path.join(OLLAMA_ALIGNMENT_DIR, t)
+            os.makedirs(alignment_folder_path, exist_ok=True)
             try:
                 alignment_file_path = os.path.join(alignment_folder_path, file)
-                alignment_dict = compute_keyfact_alignment_single_file(sentence_file_path, keyfact_folder_path, alignment_file_path, model)
+                alignment_dict = compute_keyfact_alignment_single_file(sentence_file_path, keyfact_file_path, alignment_file_path, model_family)
                 with open(alignment_file_path, 'w') as f:
                     f.write(json.dumps(alignment_dict))
             except Exception as e:
@@ -128,4 +128,4 @@ def compute_keyfact_alignment_all_files(model='llama3.3:latest'):
 
 
 if __name__ == '__main__':
-    extract_keyfact_all_files()
+    compute_keyfact_alignment_all_files()

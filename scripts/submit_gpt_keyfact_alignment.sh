@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=fact_check
-#SBATCH --output=gpt_fact_check_%A_%a.log
+#SBATCH --job-name=keyfact_alignment
+#SBATCH --output=gpt_keyfact_alignment_%A_%a.log
 #SBATCH --time=12:00:00
 #SBATCH --partition=cpucluster
 #SBATCH --cpus-per-task=4
@@ -13,7 +13,7 @@ export PATH=$HOME/.local/bin:$PATH
 
 echo "🚀 Running Python script"
 
-python3 -u fact_checking.py "${SLURM_ARRAY_TASK_ID}" "None"
+python3 -u keyfact_alignment.py "${SLURM_ARRAY_TASK_ID}" "None"
 
 
 echo "✅ Python script execution finished."
